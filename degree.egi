@@ -1,0 +1,32 @@
+(define $term-degree
+  (lambda [$t $var]
+    (match t math-expr
+      {[(* $a ,var^$k _) k]
+       [_ 0]})))
+
+(term-degree (* x^3 y) x)
+
+(define $degree
+  (lambda [$p $var]
+    (foldl b.max 0 (map (term-degree $ var)
+                        (match p math-expr {[<poly $ts> ts]})))))
+
+(define $f (* x (+ x x^2) (+ 2 x y)))
+(degree f x)
+(degree f y)
+
+(define $term-compare
+  (lambda [$t1 $t2 $var]
+    (compare (term-degree t1 var) (term-degree t2 var))))
+(term-compare x^2 x^3 x)
+(term-compare x^2 x^3 y)
+
+(define $term-b.max
+  (lambda [$t1 $t2 $var]
+    (if (lt? (term-degree t1 var) (term-degree t2 var)) t1 t2)))
+(term-b.max x^2 x^3 x)
+(term-b.max x^2 x^3 y)
+
+(define $term-max (cambda $xs (foldl term-b.max (car xs) (cdr xs))))
+
+
